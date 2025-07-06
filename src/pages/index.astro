@@ -1,6 +1,9 @@
 ---
 import Layout from '@/layouts/Layout.astro';
 import boletoImage from '@/assets/boleto-rifa.webp';
+import qrBlImage from '@/assets/QR-bl.webp';
+import qrCoopmegoImage from '@/assets/QR-coopmego.webp';
+import { Image } from 'astro:assets';
 
 const startNumber = 101;
 const endNumber = 200;
@@ -25,11 +28,17 @@ const numbers = Array.from({ length: endNumber - startNumber + 1 }, (_, i) => st
 				</div>
 			</article>
 			<article class='col-span-1'>
-				<img class='' src={boletoImage.src} alt='Boleto de la rifa' />
+				<Image src={boletoImage} alt='Boleto de la rifa' loading='lazy' decoding='async' class:list='w-full h-54' quality={85} />
 			</article>
 		</section>
-		<section>
-			<h2 class='text-xl md:text-2xl lg:text-3xl font-bold text-center md:text-left m-0'>Para realizar el pago, contacte al numero 0967885672</h2>
+		<section class='grid grid-cols-1 md:grid-cols-2 gap-4 items-center'>
+			<h2 class='text-xl md:text-2xl lg:text-3xl font-bold text-center md:text-left m-0'>
+				Para realizar el pago, contacte al numero 0967885672, o escanee el código QR
+			</h2>
+			<div class='flex flex-row gap-4 items-center justify-center'>
+				<Image src={qrBlImage} alt='QR' loading='lazy' decoding='async' class:list='h-auto w-38 sm:w-48' quality={85} />
+				<Image src={qrCoopmegoImage} alt='QR' loading='lazy' decoding='async' class:list='h-auto w-38 sm:w-48' quality={85} />
+			</div>
 		</section>
 		<section>
 			<h2 class='text-xl md:text-2xl lg:text-3xl font-bold text-center m-0'>Por favor selecciona tu número favorito</h2>
@@ -39,7 +48,8 @@ const numbers = Array.from({ length: endNumber - startNumber + 1 }, (_, i) => st
 				numbers.map((number) => (
 					<button
 						class='rounded-lg border-2 border-indigo-300 cursor-pointer py-4 hover:bg-indigo-300 hover:text-white disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed transition-colors duration-200 col-span-1'
-						data-number={number}>
+						data-number={number}
+					>
 						{number}
 					</button>
 				))
@@ -51,7 +61,8 @@ const numbers = Array.from({ length: endNumber - startNumber + 1 }, (_, i) => st
 			<!-- Contenido del modal -->
 			<div
 				class='relative z-10 border-2 border-indigo-300 bg-white rounded-lg max-w-md w-11/12 md:w-full mx-auto my-16 p-6'
-				onclick='event.stopPropagation()'>
+				onclick='event.stopPropagation()'
+			>
 				<span class='absolute top-4 right-4 text-gray-500 text-2xl font-bold cursor-pointer hover:text-black close-modal'>&times;</span>
 				<h2 class='text-xl font-bold mb-4'>Reservar número <span id='selectedNumber' class='text-indigo-600'></span></h2>
 
@@ -81,12 +92,14 @@ const numbers = Array.from({ length: endNumber - startNumber + 1 }, (_, i) => st
 					<div class='flex justify-center items-center space-x-3 pt-4'>
 						<button
 							type='button'
-							class='close-modal px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-full cursor-pointer'>
+							class='close-modal px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-full cursor-pointer'
+						>
 							Cancelar
 						</button>
 						<button
 							type='submit'
-							class='px-4 py-2 border border-transparent rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-full cursor-pointer'>
+							class='px-4 py-2 border border-transparent rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-full cursor-pointer'
+						>
 							Reservar
 						</button>
 					</div>
