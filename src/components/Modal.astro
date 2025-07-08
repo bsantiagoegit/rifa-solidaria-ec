@@ -1,0 +1,60 @@
+---
+interface Props {
+	idModal: string;
+	idSelectedNumber: string;
+	idReservationForm: string;
+	closeModalClass: string;
+	typeButton: 'submit' | 'button';
+}
+
+const { idModal, idSelectedNumber, idReservationForm, closeModalClass, typeButton } = Astro.props;
+---
+
+<div
+	id={idModal}
+	class='fixed inset-0 z-50 place-content-center bg-black/50 p-4 overflow-auto hidden'
+	role='dialog'
+	aria-modal='true'
+	aria-labelledby='modalTitle'
+>
+	<div class='w-full max-w-md rounded-lg bg-white p-6 shadow-lg dark:bg-gray-900'>
+		<h2 id='modalTitle' class='text-xl font-bold text-gray-900 sm:text-2xl dark:text-white'>Reservar número {idSelectedNumber}</h2>
+
+		<form id={idReservationForm}>
+			<div class='space-y-2'>
+				<label for='name' class='block text-sm font-medium text-gray-700'>Nombre completo</label>
+				<input
+					type='text'
+					id='name'
+					required
+					class='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500'
+				/>
+			</div>
+
+			<div class='space-y-2'>
+				<label for='phone' class='block text-sm font-medium text-gray-700'>Teléfono</label>
+				<input
+					type='tel'
+					id='phone'
+					required
+					class='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500'
+				/>
+			</div>
+
+			<div class='flex justify-center items-center space-x-3 pt-4'>
+				<button
+					type='button'
+					class={`${closeModalClass} px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-full cursor-pointer`}
+				>
+					Cancelar
+				</button>
+				<button
+					type={typeButton}
+					class='px-4 py-2 border border-transparent rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-full cursor-pointer'
+				>
+					Reservar
+				</button>
+			</div>
+		</form>
+	</div>
+</div>

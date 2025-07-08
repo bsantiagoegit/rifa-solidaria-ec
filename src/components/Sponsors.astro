@@ -1,0 +1,11 @@
+---
+import { sponsors } from '@sponsors';
+---
+
+<section class='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4'>
+	{
+		sponsors.map(({ name, image }) => (
+			<img src={image} alt={`Logo de ${name}`} loading='lazy' width='100' height='100' class='object-contain mx-auto' />
+		))
+	}
+</section>

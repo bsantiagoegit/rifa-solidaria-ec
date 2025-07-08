@@ -1,9 +1,16 @@
 ---
 import Layout from '@/layouts/Layout.astro';
-import boletoImage from '@/assets/boleto-rifa.webp';
 import qrBlImage from '@/assets/QR-bl.webp';
 import qrCoopmegoImage from '@/assets/QR-coopmego.webp';
+import sponsorArellanoImage from '@/assets/sponsor-arellano.webp';
+import sponsorArseniaImage from '@/assets/sponsor-arsenia.webp';
+import sponsorCarboneroOccidentalImage from '@/assets/sponsor-carbonero-occidental.webp';
+import sponsorCarboneroStalinImage from '@/assets/sponsor-carbonero-stalin.webp';
+import sponsorFaisanImage from '@/assets/sponsor-faisan.webp';
 import { Image } from 'astro:assets';
+import Hero from '@/components/Hero.astro';
+import Awards from '@/components/Awards.astro';
+import Sponsors from '@/components/Sponsors.astro';
 
 const startNumber = 101;
 const endNumber = 200;
@@ -12,25 +19,9 @@ const numbers = Array.from({ length: endNumber - startNumber + 1 }, (_, i) => st
 
 <Layout>
 	<div class='grid grid-cols-1 gap-2 md:gap-4 max-w-4xl mx-auto px-4 py-8 overflow-x-hidden'>
-		<h1 class='text-3xl md:text-4xl lg:text-5xl font-bold text-center m-0'>Rifa solidaria</h1>
-		<section class='grid grid-cols-1 sm:grid-cols-2 gap-2 items-center m-0'>
-			<article class='col-span-1 flex flex-col gap-2'>
-				<p class='text-md md:text-xl text-left'>Rifa solidaria a favor de Norman Patricio Espinosa Guarnizo</p>
-				<p class='text-md md:text-xl text-left'>La rifa se realizara el día 26 de Julio de 2025</p>
-				<p class='text-md md:text-xl text-left'>El valor de la rifa es de $5</p>
-				<p class='text-md md:text-xl text-left'>Los premios a sortear son:</p>
-				<div class='pl-10'>
-					<ul class='list-disc'>
-						<li class='text-sm md:text-md'>1er Premio: $300</li>
-						<li class='text-sm md:text-md'>2do Premio: Un pollo asado</li>
-						<li class='text-sm md:text-md'>3er Premio: Una canasta de víveres</li>
-					</ul>
-				</div>
-			</article>
-			<article class='col-span-1'>
-				<Image src={boletoImage} alt='Boleto de la rifa' loading='lazy' decoding='async' class:list='w-full h-54' quality={85} />
-			</article>
-		</section>
+		<Hero />
+		<Awards />
+		<Sponsors />
 		<section class='grid grid-cols-1 md:grid-cols-2 gap-4 items-center'>
 			<h2 class='text-xl md:text-2xl lg:text-3xl font-bold text-center md:text-left m-0'>
 				Para realizar el pago, contacte al numero 0967885672, o escanee el código QR
@@ -55,7 +46,6 @@ const numbers = Array.from({ length: endNumber - startNumber + 1 }, (_, i) => st
 				))
 			}
 		</section>
-
 		<!-- Modal -->
 		<div id='reservationModal' class='fixed inset-0 z-50 overflow-auto hidden'>
 			<!-- Contenido del modal -->
@@ -106,6 +96,13 @@ const numbers = Array.from({ length: endNumber - startNumber + 1 }, (_, i) => st
 				</form>
 			</div>
 		</div>
+		<!-- <Modal
+			idModal='reservationModal'
+			idSelectedNumber='selectedNumber'
+			idReservationForm='reservationForm'
+			closeModalClass='close-modal'
+			typeButton='submit'
+		/> -->
 	</div>
 </Layout>
 
@@ -118,7 +115,7 @@ const numbers = Array.from({ length: endNumber - startNumber + 1 }, (_, i) => st
 	const messageDiv = document.getElementById('message');
 
 	// Cargar números reservados al iniciar
-	document.addEventListener('DOMContentLoaded', async () => {
+	document?.addEventListener('DOMContentLoaded', async () => {
 		try {
 			const response = await fetch('/api/tomados');
 			const data = await response.json();
@@ -157,19 +154,19 @@ const numbers = Array.from({ length: endNumber - startNumber + 1 }, (_, i) => st
 	function initModal() {
 		// Mostrar modal al hacer clic en un número
 		document.querySelectorAll('button[data-number]').forEach((button) => {
-			button.addEventListener('click', handleNumberClick);
+			button?.addEventListener('click', handleNumberClick);
 		});
 
 		// Cerrar modal con la X o el botón Cancelar
 		document.querySelectorAll('.close-modal').forEach((btn) => {
-			btn.addEventListener('click', closeModal);
+			btn?.addEventListener('click', closeModal);
 		});
 
 		// Cerrar al hacer clic fuera del contenido
 		modal.addEventListener('click', closeModal);
 
 		// Cerrar con Escape
-		document.addEventListener('keydown', (e) => {
+		document?.addEventListener('keydown', (e) => {
 			if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
 				closeModal();
 			}
@@ -196,13 +193,13 @@ const numbers = Array.from({ length: endNumber - startNumber + 1 }, (_, i) => st
 
 	// Inicializar cuando el DOM esté listo
 	if (document.readyState === 'loading') {
-		document.addEventListener('DOMContentLoaded', initModal);
+		document?.addEventListener('DOMContentLoaded', initModal);
 	} else {
 		initModal();
 	}
 
 	// Manejar envío del formulario
-	reservationForm.addEventListener('submit', async (e) => {
+	reservationForm?.addEventListener('submit', async (e) => {
 		e.preventDefault();
 
 		const name = document.getElementById('name').value.trim();
