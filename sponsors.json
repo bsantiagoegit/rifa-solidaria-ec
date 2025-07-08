@@ -1,0 +1,24 @@
+{
+	"sponsors": [
+		{
+			"name": "Arellano",
+			"image": "/src/assets/sponsor-arellano.webp"
+		},
+		{
+			"name": "Arsenia",
+			"image": "/src/assets/sponsor-arsenia.webp"
+		},
+		{
+			"name": "Carbonero Mirador STALIN",
+			"image": "/src/assets/sponsor-carbonero-stalin.webp"
+		},
+		{
+			"name": "Carbonero Mirador Occidental",
+			"image": "/src/assets/sponsor-carbonero-occidental.webp"
+		},
+		{
+			"name": "Faisan",
+			"image": "/src/assets/sponsor-faisan.webp"
+		}
+	]
+}
