@@ -1,0 +1,21 @@
+---
+const startNumber: number = 101;
+const endNumber: number = 200;
+const numbers: number[] = Array.from({ length: endNumber - startNumber + 1 }, (_, i) => startNumber + i);
+---
+
+<section class='flex flex-col gap-4 m-0 w-full'>
+	<h2 class='text-xl md:text-2xl lg:text-3xl font-bold text-center m-0'>Por favor selecciona tu número favorito</h2>
+	<article class='grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 lg:grid-cols-10 gap-4 m-0'>
+		{
+			numbers.map((number) => (
+				<button
+					class='rounded-lg border-2 border-indigo-300 cursor-pointer py-4 hover:bg-indigo-300 hover:text-white disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed transition-colors duration-200 col-span-1'
+					data-number={number}
+				>
+					{number}
+				</button>
+			))
+		}
+	</article>
+</section>
