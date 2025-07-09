@@ -8,31 +8,37 @@ export const awards = [
 		id: 2,
 		posicion: '2do Premio',
 		descripcion:
-			'Servicio de rectificación valorado en $60 - Rectificadora MA.ARELLANO, CDLA. Lojana de Turismo, Manuel Vicente Vivanco Tinoco y Ramon Burneo',
+			'Cambio de aceite par motor, ABC de frenos y revisión general de automóvil valorado en $100 - AUTO AND TRUCK CENTER, Av. Eduardo Kigman junto a Gasolinera PS vía a Vilcabamba',
 	},
 	{
 		id: 3,
 		posicion: '3er Premio',
-		descripcion: 'Servicio automotriz valorado en $35 - Cortesía de Concesionaria COMPUCARS, Av. Isidro Ayora y Av. Salvador Bustamante Celi',
+		descripcion:
+			'Servicio de rectificación valorado en $60 - Rectificadora MA.ARELLANO, CDLA. Lojana de Turismo, Manuel Vicente Vivanco Tinoco y Ramon Burneo',
 	},
 	{
 		id: 4,
 		posicion: '4to Premio',
-		descripcion: 'Una orden de consumo por 20 dólares en Carbonero Mirador Occidental - Av. Manuel Carrión Pinzano',
+		descripcion: 'Servicio automotriz valorado en $35 - Cortesía de Concesionaria COMPUCARS, Av. Isidro Ayora y Av. Salvador Bustamante Celi',
 	},
 	{
 		id: 5,
 		posicion: '5to Premio',
-		descripcion: 'Una orden de consumo por 20 dólares en Carbonero Mirador STALIN - Via antigua a Zamora',
+		descripcion: 'Una orden de consumo por 20 dólares en Carbonero Mirador Occidental - Av. Manuel Carrión Pinzano',
 	},
 	{
 		id: 6,
 		posicion: '6to Premio',
-		descripcion: 'Una orden de consumo por 20 dólares en Arsenia - Av. Emiliano Ortega entre José Félix de Valdivieso y Quito',
+		descripcion: 'Una orden de consumo por 20 dólares en Carbonero Mirador STALIN - Via antigua a Zamora',
 	},
 	{
 		id: 7,
 		posicion: '7mo Premio',
+		descripcion: 'Una orden de consumo por 20 dólares en Arsenia - Av. Emiliano Ortega entre José Félix de Valdivieso y Quito',
+	},
+	{
+		id: 8,
+		posicion: '8vo Premio',
 		descripcion: 'Una orden de consumo en Faisan Asados de casa',
 	},
 	/* {
