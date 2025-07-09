@@ -1,11 +1,16 @@
 ---
-import { sponsors } from '@sponsors';
+import sponsorArellano from '@/assets/sponsor-arellano.webp';
+import sponsorArsenia from '@/assets/sponsor-arsenia.webp';
+import sponsorCarboneroOccidental from '@/assets/sponsor-carbonero-occidental.webp';
+import sponsorCarboneroStalin from '@/assets/sponsor-carbonero-stalin.webp';
+import sponsorFaisan from '@/assets/sponsor-faisan.webp';
+import { Image } from 'astro:assets';
 ---
 
 <section class='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4'>
-	{
-		sponsors.map(({ name, image }) => (
-			<img src={image} alt={`Logo de ${name}`} loading='lazy' width='100' height='100' class='object-contain mx-auto' />
-		))
-	}
+	<Image src={sponsorArellano} alt='Sponsor Arellano' loading='lazy' decoding='async' class='object-contain mx-auto' />
+	<Image src={sponsorArsenia} alt='Sponsor Arsenia' loading='lazy' decoding='async' class='object-contain mx-auto' />
+	<Image src={sponsorCarboneroStalin} alt='Sponsor Carbonero Stalin' loading='lazy' decoding='async' class='object-contain mx-auto' />
+	<Image src={sponsorCarboneroOccidental} alt='Sponsor Carbonero Occidental' loading='lazy' decoding='async' class='object-contain mx-auto' />
+	<Image src={sponsorFaisan} alt='Sponsor Faisan' loading='lazy' decoding='async' class='object-contain mx-auto' />
 </section>
