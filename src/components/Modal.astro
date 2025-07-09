@@ -1,26 +1,10 @@
----
-interface Props {
-	idModal: string;
-	idSelectedNumber: string;
-	idReservationForm: string;
-	closeModalClass: string;
-	typeButton: 'submit' | 'button';
-}
+<div id='reservationModal' class='fixed inset-0 bg-opacity-50 flex items-center justify-center'>
+	<!-- Contenido del modal -->
+	<div class='relative border-2 border-indigo-300 bg-white rounded-lg max-w-md w-11/12 md:w-full m-0 p-6' onclick='event.stopPropagation()'>
+		<span class='absolute top-4 right-4 text-gray-500 text-2xl font-bold cursor-pointer hover:text-black close-modal'>&times;</span>
+		<h2 class='text-xl font-bold mb-4'>Reservar número <span id='selectedNumber' class='text-indigo-600'></span></h2>
 
-const { idModal, idSelectedNumber, idReservationForm, closeModalClass, typeButton } = Astro.props;
----
-
-<div
-	id={idModal}
-	class='fixed inset-0 z-50 place-content-center bg-black/50 p-4 overflow-auto hidden'
-	role='dialog'
-	aria-modal='true'
-	aria-labelledby='modalTitle'
->
-	<div class='w-full max-w-md rounded-lg bg-white p-6 shadow-lg dark:bg-gray-900'>
-		<h2 id='modalTitle' class='text-xl font-bold text-gray-900 sm:text-2xl dark:text-white'>Reservar número {idSelectedNumber}</h2>
-
-		<form id={idReservationForm}>
+		<form id='reservationForm' class='space-y-4'>
 			<div class='space-y-2'>
 				<label for='name' class='block text-sm font-medium text-gray-700'>Nombre completo</label>
 				<input
@@ -44,12 +28,12 @@ const { idModal, idSelectedNumber, idReservationForm, closeModalClass, typeButto
 			<div class='flex justify-center items-center space-x-3 pt-4'>
 				<button
 					type='button'
-					class={`${closeModalClass} px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-full cursor-pointer`}
+					class='close-modal px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-full cursor-pointer'
 				>
 					Cancelar
 				</button>
 				<button
-					type={typeButton}
+					type='submit'
 					class='px-4 py-2 border border-transparent rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-full cursor-pointer'
 				>
 					Reservar
