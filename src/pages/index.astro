@@ -43,8 +43,6 @@ import Modal from '@/components/Modal.astro';
 		} catch (error) {
 			console.error('Error al cargar números reservados:', error);
 			showMessage('Error al cargar los números reservados', 'error');
-		} finally {
-			spinner.classList.add('hidden');
 		}
 	});
 
