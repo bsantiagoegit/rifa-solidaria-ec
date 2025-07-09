@@ -34,7 +34,7 @@ export const awards = [
 	{
 		id: 7,
 		posicion: '7mo Premio',
-		descripcion: 'Una orden de consumo por 20 dólares en Arsenia - Av. Emiliano Ortega entre José Félix de Valdivieso y Quito',
+		descripcion: 'Una orden de consumo por 30 dólares en Arsenia - Av. Emiliano Ortega entre José Félix de Valdivieso y Quito',
 	},
 	{
 		id: 8,
