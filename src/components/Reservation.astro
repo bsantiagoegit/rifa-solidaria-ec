@@ -1,0 +1,15 @@
+---
+import qrBlImage from '@/assets/QR-bl.webp';
+import qrCoopmegoImage from '@/assets/QR-coopmego.webp';
+import { Image } from 'astro:assets';
+---
+
+<section class='flex flex-col md:flex-row gap-4 items-center'>
+	<h2 class='text-xl md:text-2xl lg:text-3xl font-bold text-left m-0 w-full md:w-1/2'>
+		Para realizar el pago, contacte al numero 0967885672, o escanee el código QR
+	</h2>
+	<article class='flex flex-row gap-4 items-center justify-center'>
+		<Image src={qrBlImage} alt='Código QR Banco de Loja' loading='lazy' decoding='async' class='h-auto w-38 sm:w-48' quality={85} />
+		<Image src={qrCoopmegoImage} alt='Código QR Coopmego' loading='lazy' decoding='async' class='h-auto w-38 sm:w-48' quality={85} />
+	</article>
+</section>
