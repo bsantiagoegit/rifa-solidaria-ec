@@ -39,7 +39,7 @@ export const awards = [
 	{
 		id: 8,
 		posicion: '8vo Premio',
-		descripcion: 'Una orden de consumo en Faisan Asados de casa',
+		descripcion: 'Una orden de consumo por 23 dólares (Combo Faisán) en Faisán Asados de casa',
 	},
 	/* {
 		id: 8,
