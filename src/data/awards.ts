@@ -41,14 +41,9 @@ export const awards = [
 		posicion: '8vo Premio',
 		descripcion: 'Una orden de consumo por 23 dólares (Combo Faisán) en Faisán Asados de casa',
 	},
-	/* {
-		id: 8,
-		posicion: '8vo Premio',
-		descripcion: 'Servicio de rectificación valorado en $60 - Rectificadora Areyano',
-	},
 	{
 		id: 9,
 		posicion: '9no Premio',
-		descripcion: 'Canasta de víveres',
-	}, */
+		descripcion: 'Orden para 2 personas para desayuno buffet en Sonesta Hotel - Av. Zoilo Rodriguez y Antisana, Calle Illiniza, Loja 110150',
+	},
 ];
