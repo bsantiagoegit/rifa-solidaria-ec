@@ -16,82 +16,67 @@ export const POST: APIRoute = async ({ request }) => {
 	}
 
 	try {
-		// Verificar que el request tenga contenido
 		if (!request.body) {
-			console.error('El cuerpo de la solicitud está vacío');
 			return new Response(JSON.stringify({ error: 'El cuerpo de la solicitud está vacío' }), {
 				status: 400,
 				headers: { 'Content-Type': 'application/json' },
 			});
 		}
 
-		const data = await request.json().catch((error) => {
-			console.error('Error al parsear JSON:', error);
-			throw new Error('Formato de solicitud inválido');
-		});
+		const data = await request.json();
+		const { numbers, name, phone } = data;
 
-		const { number, name, phone } = data;
-
-		// Validar que todos los campos requeridos estén presentes
-		if (number === undefined || !name || !phone) {
-			return new Response(
-				JSON.stringify({
-					error: 'Faltan campos requeridos',
-					received: { number, name: !!name, phone: !!phone },
-				}),
-				{
-					status: 400,
-					headers: { 'Content-Type': 'application/json' },
-				},
-			);
+		// Validaciones básicas
+		if (!Array.isArray(numbers) || numbers.length === 0 || !name || !phone) {
+			return new Response(JSON.stringify({ error: 'Faltan campos requeridos o formato inválido', received: { numbers, name, phone } }), {
+				status: 400,
+				headers: { 'Content-Type': 'application/json' },
+			});
 		}
 
-		// Validar que el número sea efectivamente un número
-		const numberValue = Number(number);
-		if (isNaN(numberValue) || !Number.isInteger(numberValue) || numberValue <= 0) {
-			console.error('Número inválido:', number);
-			return new Response(
-				JSON.stringify({
-					error: 'El número debe ser un entero positivo',
-					received: number,
-					type: typeof number,
-				}),
-				{
-					status: 400,
-					headers: { 'Content-Type': 'application/json' },
-				},
-			);
+		// Validar cada número
+		const cleanedNumbers = numbers.map(Number).filter((n) => Number.isInteger(n) && n > 0);
+		if (cleanedNumbers.length !== numbers.length) {
+			return new Response(JSON.stringify({ error: 'Todos los números deben ser enteros positivos', received: numbers }), {
+				status: 400,
+				headers: { 'Content-Type': 'application/json' },
+			});
 		}
 
-		const numberRef = db.ref(`numbers/${numberValue}`);
-		const snapshot = await numberRef.get();
-		// Verificar si el número ya está tomado
-		if (snapshot.exists() && snapshot.val() !== null) {
-			return new Response(
-				JSON.stringify({
-					error: 'Este número ya ha sido reservado',
-					number: numberValue,
-					existingData: snapshot.val(),
-				}),
-				{
-					status: 400,
-					headers: { 'Content-Type': 'application/json' },
-				},
-			);
+		// Verificar si alguno ya está reservado
+		const taken: number[] = [];
+		for (const number of cleanedNumbers) {
+			const ref = db.ref(`numbers/${number}`);
+			const snapshot = await ref.get();
+			if (snapshot.exists() && snapshot.val() !== null) {
+				taken.push(number);
+			}
 		}
 
+		if (taken.length > 0) {
+			return new Response(JSON.stringify({ error: 'Algunos números ya han sido reservados', taken }), {
+				status: 400,
+				headers: { 'Content-Type': 'application/json' },
+			});
+		}
+
+		// Reservar todos
 		const reservationData = {
 			name: String(name),
 			phone: String(phone),
 			reservedAt: new Date().toISOString(),
 		};
 
-		await numberRef.set(reservationData);
+		const updates: Record<string, typeof reservationData> = {};
+		for (const number of cleanedNumbers) {
+			updates[`numbers/${number}`] = reservationData;
+		}
+		await db.ref().update(updates);
 
 		return new Response(
 			JSON.stringify({
-				message: 'Número reservado exitosamente',
-				number: numberValue,
+				message: 'Números reservados exitosamente',
+				numbers: cleanedNumbers,
 				data: reservationData,
 			}),
 			{
@@ -114,6 +99,7 @@ export const POST: APIRoute = async ({ request }) => {
 		);
 	}
 };
+
 // Manejar todas las solicitudes
 export const ALL: APIRoute = async ({ request }) => {
 	if (request.method === 'POST') {
