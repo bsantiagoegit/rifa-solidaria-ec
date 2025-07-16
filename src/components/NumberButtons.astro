@@ -1,21 +1,37 @@
 ---
 const startNumber: number = 1;
-const endNumber: number = 400;
+const endNumber: number = 1000;
 const numbers: number[] = Array.from({ length: endNumber - startNumber + 1 }, (_, i) => startNumber + i);
+const pageSize = 50;
 ---
 
 <section class='flex flex-col gap-4 m-0 w-full'>
-	<h2 class='text-xl md:text-2xl lg:text-3xl font-bold text-center m-0'>Por favor selecciona tu número favorito</h2>
-	<article class='grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 lg:grid-cols-10 gap-4 m-0'>
-		{
-			numbers.map((number) => (
-				<button
-					class='rounded-lg border-2 border-indigo-300 cursor-pointer py-4 hover:bg-indigo-300 hover:text-white disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed transition-colors duration-200 col-span-1'
-					data-number={number}
-				>
-					{number}
-				</button>
-			))
-		}
+	<h2 class='text-xl md:text-2xl lg:text-3xl font-bold text-center m-0'>Selecciona tus números favoritos</h2>
+
+	<!-- Números por página, controlado por JS -->
+	<article id='numberContainer' class='grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-10 gap-4 m-0'>
+		<!-- Números se insertan con JS -->
 	</article>
+
+	<!-- Paginación -->
+	<div class='flex justify-center gap-4 mt-4'>
+		<button id='prevPage' class='px-4 py-2 bg-gray-200 rounded hover:bg-gray-300'>Anterior</button>
+		<span id='currentPage' class='flex items-center font-semibold'></span>
+		<button id='nextPage' class='px-4 py-2 bg-gray-200 rounded hover:bg-gray-300'>Siguiente</button>
+	</div>
+
+	<!-- Botón para abrir modal -->
+	<div class='text-center mt-6'>
+		<button
+			id='openReservationModal'
+			class='bg-indigo-600 text-white font-semibold px-6 py-2 rounded-lg hover:bg-indigo-700 transition-colors'
+		>
+			Reservar seleccionados
+		</button>
+	</div>
+
+	<!-- Pasar los números al script -->
+	<script type="application/json" id="number-data">
+		{JSON.stringify({ numbers, pageSize })}
+	</script>
 </section>

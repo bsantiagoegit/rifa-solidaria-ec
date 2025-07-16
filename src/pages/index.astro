@@ -16,6 +16,7 @@ import Modal from '@/components/Modal.astro';
 	<NumberButtons />
 	<Modal />
 </Layout>
+
 <!-- Toast message -->
 <div class='fixed top-4 right-4 z-50'>
 	<div
@@ -26,32 +27,98 @@ import Modal from '@/components/Modal.astro';
 </div>
 
 <script is:inline>
-	// Variables globales
-	let selectedNumber = null;
+	const selectedNumbers = new Set();
+	let takenNumbersCache = {};
+	const pageSize = 50;
+	const numbers = Array.from({ length: 1000 }, (_, i) => i + 1);
+	let currentPage = 1;
+	const totalPages = Math.ceil(numbers.length / pageSize);
 
 	const modal = document.getElementById('reservationModal');
 	const selectedNumberSpan = document.getElementById('selectedNumber');
 	const reservationForm = document.getElementById('reservationForm');
 	const messageDiv = document.getElementById('message');
-	modal.classList.add('hidden');
-	// Cargar números reservados al iniciar
-	document?.addEventListener('DOMContentLoaded', async () => {
-		try {
-			const response = await fetch('/api/tomados');
-			const data = await response.json();
-			updateButtonStates(data);
-		} catch (error) {
-			console.error('Error al cargar números reservados:', error);
-			showMessage('Error al cargar los números reservados', 'error');
+	const container = document.getElementById('numberContainer');
+	const currentPageLabel = document.getElementById('currentPage');
+
+	// Actualizar botones reservados
+	function updateButtonStates(takenNumbers) {
+		Object.keys(takenNumbers).forEach((number) => {
+			const label = document.querySelector(`.number-label[data-number="${number}"]`);
+			const checkbox = document.querySelector(`.number-checkbox[data-number="${number}"]`);
+
+			if (label && checkbox) {
+				checkbox.disabled = true;
+				label.classList.add('line-through', 'bg-gray-200', 'cursor-not-allowed', 'text-gray-400');
+				label.classList.remove('hover:bg-indigo-100', 'cursor-pointer');
+			}
+		});
+	}
+
+	// Render de cada página
+	function renderPage() {
+		container.innerHTML = '';
+		const start = (currentPage - 1) * pageSize;
+		const end = start + pageSize;
+
+		numbers.slice(start, end).forEach((number) => {
+			const label = document.createElement('label');
+			label.className =
+				'number-label relative flex items-center justify-center rounded-lg border-2 border-indigo-300 cursor-pointer hover:bg-indigo-100 transition-colors duration-200 size-[50px]';
+			label.dataset.number = number;
+
+			const input = document.createElement('input');
+			input.type = 'checkbox';
+			input.className = 'number-checkbox absolute opacity-0 w-0 h-0';
+			input.dataset.number = number;
+
+			const span = document.createElement('span');
+			span.textContent = number;
+			span.className = 'pointer-events-none';
+
+			input.addEventListener('change', handleCheckboxChange);
+			label.appendChild(input);
+			label.appendChild(span);
+			container.appendChild(label);
+		});
+
+		currentPageLabel.textContent = `Página ${currentPage} de ${totalPages}`;
+		updateButtonStates(takenNumbersCache);
+	}
+
+	// Evento paginación
+	document.getElementById('prevPage').addEventListener('click', () => {
+		if (currentPage > 1) {
+			currentPage--;
+			renderPage();
+		}
+	});
+	document.getElementById('nextPage').addEventListener('click', () => {
+		if (currentPage < totalPages) {
+			currentPage++;
+			renderPage();
 		}
 	});
 
-	// Mostrar mensajes al usuario
+	// Checkbox cambio
+	function handleCheckboxChange(event) {
+		const checkbox = event.currentTarget;
+		const number = checkbox.dataset.number;
+
+		if (checkbox.checked) {
+			selectedNumbers.add(number);
+			checkbox.parentElement.classList.add('bg-indigo-300', 'text-white');
+		} else {
+			selectedNumbers.delete(number);
+			checkbox.parentElement.classList.remove('bg-indigo-300', 'text-white');
+		}
+	}
+
+	// Mostrar mensajes
 	function showMessage(message, type = 'success') {
 		messageDiv.textContent = message;
 		messageDiv.classList.remove('hidden');
 
-		// Ajustar el estilo según el tipo de mensaje
 		if (type === 'error') {
 			messageDiv.classList.remove('bg-green-500');
 			messageDiv.classList.add('bg-red-500');
@@ -60,13 +127,11 @@ import Modal from '@/components/Modal.astro';
 			messageDiv.classList.add('bg-green-500');
 		}
 
-		// Animación de entrada
 		messageDiv.style.transform = 'translateY(-100%)';
 		requestAnimationFrame(() => {
 			messageDiv.style.transform = 'translateY(0)';
 		});
 
-		// Ocultar después de 3 segundos
 		setTimeout(() => {
 			messageDiv.style.transform = 'translateY(-100%)';
 			requestAnimationFrame(() => {
@@ -76,84 +141,47 @@ import Modal from '@/components/Modal.astro';
 		}, 3000);
 	}
 
-	// Actualizar el estado de los botones según los números reservados
-	function updateButtonStates(takenNumbers) {
-		Object.keys(takenNumbers).forEach((number) => {
-			const button = document.querySelector(`button[data-number="${number}"]`);
-			if (button) {
-				button.disabled = true;
-				button.classList.add('line-through');
-			}
-		});
-	}
-
-	// Inicialización de eventos
-	function initModal() {
-		// Mostrar modal al hacer clic en un número
-		document.querySelectorAll('button[data-number]').forEach((button) => {
-			button?.addEventListener('click', handleNumberClick);
-		});
-
-		// Cerrar modal con la X o el botón Cancelar
-		document.querySelectorAll('.close-modal').forEach((btn) => {
-			btn?.addEventListener('click', closeModal);
-		});
-
-		// Cerrar al hacer clic fuera del contenido
-		modal.addEventListener('click', closeModal);
-
-		// Cerrar con Escape
-		document?.addEventListener('keydown', (e) => {
-			if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
-				closeModal();
-			}
-		});
-	}
-
-	// Manejar clic en un botón de número
-	function handleNumberClick(event) {
-		event.stopPropagation();
-		const button = event.currentTarget;
-		if (button.disabled) return;
-
-		selectedNumber = button.dataset.number;
-		selectedNumberSpan.textContent = selectedNumber;
-
+	// Abrir modal
+	document.getElementById('openReservationModal')?.addEventListener('click', () => {
+		if (selectedNumbers.size === 0) {
+			showMessage('Selecciona al menos un número antes de reservar', 'error');
+			return;
+		}
+		selectedNumberSpan.textContent = [...selectedNumbers].join(', ');
 		modal.classList.remove('hidden');
-		document.body.style.overflow = 'hidden'; // Prevenir scroll del body
-	}
+		modal.classList.add('flex');
+		document.body.style.overflow = 'hidden';
+	});
 
 	// Cerrar modal
+	document.querySelectorAll('.close-modal').forEach((btn) => {
+		btn?.addEventListener('click', closeModal);
+	});
+	modal.addEventListener('click', closeModal);
+	document?.addEventListener('keydown', (e) => {
+		if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+			closeModal();
+		}
+	});
 	function closeModal() {
 		modal.classList.add('hidden');
-		document.body.style.overflow = ''; // Restaurar scroll del body
+		document.body.style.overflow = '';
 	}
 
-	// Inicializar cuando el DOM esté listo
-	if (document.readyState === 'loading') {
-		document?.addEventListener('DOMContentLoaded', initModal);
-	} else {
-		initModal();
-	}
-
-	// Manejar envío del formulario
+	// Envío del formulario
 	reservationForm?.addEventListener('submit', async (e) => {
 		e.preventDefault();
 
 		const name = document.getElementById('name').value.trim();
 		const phone = document.getElementById('phone').value.trim();
 
-		// Validar que se haya seleccionado un número
-		if (!selectedNumber) {
-			showMessage('Por favor selecciona un número primero', 'error');
+		if (selectedNumbers.size === 0) {
+			showMessage('Por favor selecciona al menos un número', 'error');
 			return;
 		}
 
 		try {
-			// Convertir el número a entero explícitamente
-			const number = parseInt(selectedNumber, 10);
-
-			// Mostrar indicador de carga
+			const numbers = [...selectedNumbers].map((n) => parseInt(n, 10));
 			showMessage('Procesando reserva...', 'info');
 
 			const response = await fetch('/api/reservar', {
@@ -162,7 +190,7 @@ import Modal from '@/components/Modal.astro';
 					'Content-Type': 'application/json',
 				},
 				body: JSON.stringify({
-					number,
+					numbers,
 					name,
 					phone,
 				}),
@@ -171,23 +199,41 @@ import Modal from '@/components/Modal.astro';
 			const result = await response.json();
 
 			if (response.ok) {
-				showMessage('¡Número reservado exitosamente!', 'success');
-				// Deshabilitar el botón del número reservado
-				const button = document.querySelector(`button[data-number="${selectedNumber}"]`);
-				if (button) {
-					button.disabled = true;
-					button.classList.add('bg-gray-300', 'cursor-not-allowed', 'line-through');
-				}
-				// Cerrar el modal
-				modal.classList.add('hidden');
-				// Limpiar el formulario
+				showMessage('¡Números reservados exitosamente!', 'success');
+
+				numbers.forEach((number) => {
+					const checkbox = document.querySelector(`.number-checkbox[data-number="${number}"]`);
+					const label = document.querySelector(`.number-label[data-number="${number}"]`);
+					if (checkbox && label) {
+						checkbox.disabled = true;
+						checkbox.checked = false;
+						label.classList.add('bg-gray-200', 'cursor-not-allowed', 'text-gray-400', 'line-through');
+						label.classList.remove('bg-indigo-300', 'text-white');
+						selectedNumbers.delete(String(number));
+					}
+				});
+
 				reservationForm.reset();
+				closeModal();
 			} else {
 				showMessage(result.error || 'Error al procesar la reserva', 'error');
 			}
 		} catch (error) {
 			console.error('Error:', error);
 			showMessage('Error de conexión. Por favor, intenta de nuevo.', 'error');
+		}
+	});
+
+	// Init
+	document.addEventListener('DOMContentLoaded', async () => {
+		try {
+			const response = await fetch('/api/tomados');
+			const data = await response.json();
+			takenNumbersCache = data;
+			renderPage();
+		} catch (error) {
+			console.error('Error al cargar números reservados:', error);
+			showMessage('Error al cargar los números reservados', 'error');
 		}
 	});
 </script>
