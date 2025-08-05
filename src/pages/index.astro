@@ -21,8 +21,7 @@ import Modal from '@/components/Modal.astro';
 <div class='fixed top-4 right-4 z-50'>
 	<div
 		id='message'
-		class='hidden fixed top-4 right-4 z-50 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg transform transition-all duration-300'
-	>
+		class='hidden fixed top-4 right-4 z-50 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg transform transition-all duration-300'>
 	</div>
 </div>
 
@@ -75,6 +74,12 @@ import Modal from '@/components/Modal.astro';
 			const span = document.createElement('span');
 			span.textContent = number;
 			span.className = 'pointer-events-none';
+
+			// Restaurar estado de selección si el número estaba seleccionado
+			if (selectedNumbers.has(String(number))) {
+				input.checked = true;
+				label.classList.add('bg-indigo-300', 'text-white');
+			}
 
 			input.addEventListener('change', handleCheckboxChange);
 			label.appendChild(input);
@@ -201,17 +206,19 @@ import Modal from '@/components/Modal.astro';
 			if (response.ok) {
 				showMessage('¡Números reservados exitosamente!', 'success');
 
+				// Actualizar caché de números tomados
 				numbers.forEach((number) => {
-					const checkbox = document.querySelector(`.number-checkbox[data-number="${number}"]`);
-					const label = document.querySelector(`.number-label[data-number="${number}"]`);
-					if (checkbox && label) {
-						checkbox.disabled = true;
-						checkbox.checked = false;
-						label.classList.add('bg-gray-200', 'cursor-not-allowed', 'text-gray-400', 'line-through');
-						label.classList.remove('bg-indigo-300', 'text-white');
-						selectedNumbers.delete(String(number));
-					}
+					takenNumbersCache[number] = {
+						name,
+						phone,
+						reservedAt: new Date().toISOString(),
+					};
+					// Remover de números seleccionados
+					selectedNumbers.delete(String(number));
 				});
+
+				// Re-renderizar la página actual para aplicar los cambios
+				renderPage();
 
 				reservationForm.reset();
 				closeModal();
