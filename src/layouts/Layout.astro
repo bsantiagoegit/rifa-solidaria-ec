@@ -1,5 +1,6 @@
 ---
 import '@/styles/global.css';
+import Analytics from '@vercel/analytics/astro';
 ---
 
 <!doctype html>
@@ -14,6 +15,7 @@ import '@/styles/global.css';
 		<main class='grid grid-cols-1 gap-2 md:gap-4 max-w-4xl mx-auto px-4 py-8 overflow-x-hidden'>
 			<slot />
 		</main>
+		<Analytics />
 	</body>
 </html>
 
