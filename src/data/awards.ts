@@ -8,13 +8,13 @@ export const awards = [
 		id: 2,
 		posicion: '2do Premio',
 		descripcion:
-			'Cambio de aceite par motor, ABC de frenos y revisión general de automóvil valorado en $100 - AUTO AND TRUCK CENTER, Av. Eduardo Kigman junto a Gasolinera PS vía a Vilcabamba',
+			'Cambio de aceite para motor, ABC de frenos y revisión general de automóvil valorado en $100 - Cortesía de AUTO AND TRUCK CENTER, Av. Eduardo Kigman junto a Gasolinera PS vía a Vilcabamba',
 	},
 	{
 		id: 3,
 		posicion: '3er Premio',
 		descripcion:
-			'Servicio de rectificación valorado en $60 - Rectificadora MA.ARELLANO, CDLA. Lojana de Turismo, Manuel Vicente Vivanco Tinoco y Ramon Burneo',
+			'Servicio de rectificación valorado en $60 - Cortesía de Rectificadora MA.ARELLANO, CDLA. Lojana de Turismo, Manuel Vicente Vivanco Tinoco y Ramon Burneo',
 	},
 	{
 		id: 4,
