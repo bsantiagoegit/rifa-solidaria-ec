@@ -44,6 +44,7 @@ export const awards = [
 	{
 		id: 9,
 		posicion: '9no Premio',
-		descripcion: 'Orden para 2 personas para desayuno buffet en Sonesta Hotel - Av. Zoilo Rodriguez y Antisana, Calle Illiniza, Loja 110150',
+		descripcion:
+			'Orden de desayuno buffet para 2 personas donado por Jonathan Sotomayor en Sonesta Hotel - Av. Zoilo Rodriguez y Antisana, Calle Illiniza, Loja 110150',
 	},
 ];
