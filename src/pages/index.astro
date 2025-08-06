@@ -23,4 +23,222 @@ import Modal from '@/components/Modal.astro';
 	</div>
 </div>
 
-<script src='/public/js/raffleManager.js' is:inline></script>
+<script is:inline>
+	const selectedNumbers = new Set();
+	let takenNumbersCache = {};
+	const pageSize = 50;
+	const numbers = Array.from({ length: 1000 }, (_, i) => i + 1);
+	let currentPage = 1;
+	const totalPages = Math.ceil(numbers.length / pageSize);
+
+	const modal = document.getElementById('reservationModal');
+	const selectedNumberSpan = document.getElementById('selectedNumber');
+	const reservationForm = document.getElementById('reservationForm');
+	const messageDiv = document.getElementById('message');
+	const container = document.getElementById('numberContainer');
+	const currentPageLabel = document.getElementById('currentPage');
+
+	// Actualizar botones reservados
+	function updateButtonStates(takenNumbers) {
+		Object.keys(takenNumbers).forEach((number) => {
+			const label = document.querySelector(`.number-label[data-number="${number}"]`);
+			const checkbox = document.querySelector(`.number-checkbox[data-number="${number}"]`);
+
+			if (label && checkbox) {
+				checkbox.disabled = true;
+				label.classList.add('line-through', 'bg-gray-200', 'cursor-not-allowed', 'text-gray-400');
+				label.classList.remove('hover:bg-indigo-100', 'cursor-pointer');
+			}
+		});
+	}
+
+	// Render de cada página
+	function renderPage() {
+		container.innerHTML = '';
+		const start = (currentPage - 1) * pageSize;
+		const end = start + pageSize;
+
+		numbers.slice(start, end).forEach((number) => {
+			const label = document.createElement('label');
+			label.className =
+				'number-label relative flex items-center justify-center rounded-lg border-2 border-indigo-300 cursor-pointer hover:bg-indigo-100 transition-colors duration-200 size-[50px]';
+			label.dataset.number = number;
+
+			const input = document.createElement('input');
+			input.type = 'checkbox';
+			input.className = 'number-checkbox absolute opacity-0 w-0 h-0';
+			input.dataset.number = number;
+
+			const span = document.createElement('span');
+			span.textContent = number;
+			span.className = 'pointer-events-none';
+
+			// Restaurar estado de selección si el número estaba seleccionado
+			if (selectedNumbers.has(String(number))) {
+				input.checked = true;
+				label.classList.add('bg-indigo-300', 'text-white');
+			}
+
+			input.addEventListener('change', handleCheckboxChange);
+			label.appendChild(input);
+			label.appendChild(span);
+			container.appendChild(label);
+		});
+
+		currentPageLabel.textContent = `Página ${currentPage} de ${totalPages}`;
+		updateButtonStates(takenNumbersCache);
+	}
+
+	// Evento paginación
+	document.getElementById('prevPage').addEventListener('click', () => {
+		if (currentPage > 1) {
+			currentPage--;
+			renderPage();
+		}
+	});
+	document.getElementById('nextPage').addEventListener('click', () => {
+		if (currentPage < totalPages) {
+			currentPage++;
+			renderPage();
+		}
+	});
+
+	// Checkbox cambio
+	function handleCheckboxChange(event) {
+		const checkbox = event.currentTarget;
+		const number = checkbox.dataset.number;
+
+		if (checkbox.checked) {
+			selectedNumbers.add(number);
+			checkbox.parentElement.classList.add('bg-indigo-300', 'text-white');
+		} else {
+			selectedNumbers.delete(number);
+			checkbox.parentElement.classList.remove('bg-indigo-300', 'text-white');
+		}
+	}
+
+	// Mostrar mensajes
+	function showMessage(message, type = 'success') {
+		messageDiv.textContent = message;
+		messageDiv.classList.remove('hidden');
+
+		if (type === 'error') {
+			messageDiv.classList.remove('bg-green-500');
+			messageDiv.classList.add('bg-red-500');
+		} else {
+			messageDiv.classList.remove('bg-red-500');
+			messageDiv.classList.add('bg-green-500');
+		}
+
+		messageDiv.style.transform = 'translateY(-100%)';
+		requestAnimationFrame(() => {
+			messageDiv.style.transform = 'translateY(0)';
+		});
+
+		setTimeout(() => {
+			messageDiv.style.transform = 'translateY(-100%)';
+			requestAnimationFrame(() => {
+				messageDiv.classList.add('hidden');
+				messageDiv.style.transform = '';
+			});
+		}, 3000);
+	}
+
+	// Abrir modal
+	document.getElementById('openReservationModal')?.addEventListener('click', () => {
+		if (selectedNumbers.size === 0) {
+			showMessage('Selecciona al menos un número antes de reservar', 'error');
+			return;
+		}
+		selectedNumberSpan.textContent = [...selectedNumbers].join(', ');
+		modal.classList.remove('hidden');
+		modal.classList.add('flex');
+		document.body.style.overflow = 'hidden';
+	});
+
+	// Cerrar modal
+	document.querySelectorAll('.close-modal').forEach((btn) => {
+		btn?.addEventListener('click', closeModal);
+	});
+	modal.addEventListener('click', closeModal);
+	document?.addEventListener('keydown', (e) => {
+		if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+			closeModal();
+		}
+	});
+	function closeModal() {
+		modal.classList.add('hidden');
+		document.body.style.overflow = '';
+	}
+
+	// Envío del formulario
+	reservationForm?.addEventListener('submit', async (e) => {
+		e.preventDefault();
+
+		const name = document.getElementById('name').value.trim();
+		const phone = document.getElementById('phone').value.trim();
+
+		if (selectedNumbers.size === 0) {
+			showMessage('Por favor selecciona al menos un número', 'error');
+			return;
+		}
+
+		try {
+			const numbers = [...selectedNumbers].map((n) => parseInt(n, 10));
+			showMessage('Procesando reserva...', 'info');
+
+			const response = await fetch('/api/reservar', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					numbers,
+					name,
+					phone,
+				}),
+			});
+
+			const result = await response.json();
+
+			if (response.ok) {
+				showMessage('¡Números reservados exitosamente!', 'success');
+
+				// Actualizar caché de números tomados
+				numbers.forEach((number) => {
+					takenNumbersCache[number] = {
+						name,
+						phone,
+						reservedAt: new Date().toISOString(),
+					};
+					// Remover de números seleccionados
+					selectedNumbers.delete(String(number));
+				});
+
+				// Re-renderizar la página actual para aplicar los cambios
+				renderPage();
+
+				reservationForm.reset();
+				closeModal();
+			} else {
+				showMessage(result.error || 'Error al procesar la reserva', 'error');
+			}
+		} catch (error) {
+			console.error('Error:', error);
+			showMessage('Error de conexión. Por favor, intenta de nuevo.', 'error');
+		}
+	});
+
+	// Init
+	document.addEventListener('DOMContentLoaded', async () => {
+		try {
+			const response = await fetch('/api/tomados');
+			const data = await response.json();
+			takenNumbersCache = data;
+			renderPage();
+		} catch (error) {
+			console.error('Error al cargar números reservados:', error);
+			showMessage('Error al cargar los números reservados', 'error');
+		}
+	});
+</script>
