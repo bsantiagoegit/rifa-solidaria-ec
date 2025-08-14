@@ -27,7 +27,7 @@ import Modal from '@/components/Modal.astro';
 	const selectedNumbers = new Set();
 	let takenNumbersCache = {};
 	const pageSize = 50;
-	const numbers = Array.from({ length: 1000 }, (_, i) => i + 1);
+	const numbers = Array.from({ length: 500 }, (_, i) => i + 501);
 	let currentPage = 1;
 	const totalPages = Math.ceil(numbers.length / pageSize);
 
